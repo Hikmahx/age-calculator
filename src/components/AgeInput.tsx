@@ -1,6 +1,12 @@
-import React, { useState } from "react";
 import arrow from "../assets/icon-arrow.svg";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { getDateInput, setInput } from "../redux/reducers/ageSlice";
+import dayjs from "dayjs";
+// FOR DATE VALIDATION (NORMAL DATE DOESN'T GET CORRECTLY VALIDATED)
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 type FormValues = {
   day: string;
@@ -9,24 +15,46 @@ type FormValues = {
 };
 
 const AgeInput = () => {
-  // INPUT VALUES (SO I CAN REPLACE ALL NON-DIGITS IN INPUT FIELDS)
-  const [input, setInput] = useState({
-    day: "",
-    month: "",
-    year: "",
-  });
+  const { input } = useSelector((state: RootState) => state.age);
+  const dispatch = useDispatch();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
+    clearErrors,
   } = useForm<FormValues>({
     mode: "onChange",
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
+    if (
+      validate(
+        `${data.year}-${
+          data.month.length < 2 ? data.month.padStart(2, "0") : data.month
+        }-${data.day.length < 2 ? data.day.padStart(2, "0") : data.day}`
+      )
+    ) {
+      dispatch(getDateInput(`${data.month}/${data.day}/${data.year}`));
+      // console.log(data);
+    } else {
+      // RETURNS AN ERROR FOR THE DAY INPUT
+      setError(
+        "day",
+        {
+          type: "custom",
+          message: "Must be a valid date",
+        },
+        { shouldFocus: true }
+      );
+    }
   };
+
+  //  VALIDATE THE DATE
+  function validate(date: string) {
+    return dayjs(date, "YYYY-MM-DD", true).isValid();
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -61,13 +89,16 @@ const AgeInput = () => {
                 message: "Must be a valid day",
               },
               // REPLACES ALL NON-DIGITS
-              onChange: (e) =>
-                setInput({
-                  ...input,
-                  day: e.target.value.replace(/[^0-9 | / | -]/g, ""),
-                }),
+              onChange: (e) => {
+                dispatch(
+                  setInput({
+                    ...input,
+                    day: e.target.value.replace(/[^0-9 | / | -]/g, "") || "",
+                  })
+                );
+              },
             })}
-            value={input.day}
+            value={input.day || ""}
           />
           {errors.day && (
             <p className="text-xs font-light italic text-red-400 absolute left-0 -bottom-10 lg:-bottom-6">
@@ -80,7 +111,9 @@ const AgeInput = () => {
             htmlFor="month"
             className={
               "uppercase font-poppins text-xs lg:text-sm tracking-[0.25em] mb-[5px] lg:mb-2 " +
-              (errors.month ? "text-red-400" : "text-smokey-grey ")
+              (errors.month || errors.day?.type === "custom"
+                ? "text-red-400"
+                : "text-smokey-grey ")
             }
           >
             month
@@ -91,7 +124,9 @@ const AgeInput = () => {
             maxLength={2}
             className={
               "border rounded-md text-off-black placeholder-smokey-grey focus:outline-none focus:border-purple w-[88px] lg:w-40 h-[54px] lg:h-[72px] px-3.5 lg:px-6 text-xl lg:text-[2rem] " +
-              (errors.month ? "!border-red-400" : "border-light-grey")
+              (errors.month || errors.day?.type === "custom"
+                ? "!border-red-400"
+                : "border-light-grey")
             }
             placeholder="MM"
             {...register("month", {
@@ -105,11 +140,16 @@ const AgeInput = () => {
                 message: "Must be a valid month",
               },
               // REPLACES ALL NON-DIGITS
-              onChange: (e) =>
-                setInput({
-                  ...input,
-                  month: e.target.value.replace(/[^0-9 | / | -]/g, ""),
-                }),
+              onChange: (e) => {
+                dispatch(
+                  setInput({
+                    ...input,
+                    month: e.target.value.replace(/[^0-9 | / | -]/g, "") || "",
+                  })
+                );
+                // REMOVES THE CUSTOM DAY ERROR
+                clearErrors("day");
+              },
             })}
             value={input.month}
           />
@@ -124,7 +164,9 @@ const AgeInput = () => {
             htmlFor="year"
             className={
               "uppercase font-poppins text-xs lg:text-sm tracking-[0.25em] mb-[5px] lg:mb-2 " +
-              (errors.year ? "text-red-400" : "text-smokey-grey ")
+              (errors.year || errors.day?.type === "custom"
+                ? "text-red-400"
+                : "text-smokey-grey ")
             }
           >
             year
@@ -135,7 +177,9 @@ const AgeInput = () => {
             id="year"
             className={
               "border rounded-md text-off-black placeholder-smokey-grey focus:outline-none focus:border-purple w-[88px] lg:w-40 h-[54px] lg:h-[72px] px-3.5 lg:px-6 text-xl lg:text-[2rem] " +
-              (errors.year ? "!border-red-400" : "border-light-grey")
+              (errors.year || errors.day?.type === "custom"
+                ? "!border-red-400"
+                : "border-light-grey")
             }
             placeholder="YYYY"
             {...register("year", {
@@ -150,11 +194,16 @@ const AgeInput = () => {
                 message: "Must be a valid year",
               },
               // REPLACES ALL NON-DIGITS
-              onChange: (e) =>
-                setInput({
-                  ...input,
-                  year: e.target.value.replace(/[^0-9 | / | -]/g, ""),
-                }),
+              onChange: (e) => {
+                dispatch(
+                  setInput({
+                    ...input,
+                    year: e.target.value.replace(/[^0-9 | / | -]/g, "") || "",
+                  })
+                ),
+                  // REMOVES THE CUSTOM DAY ERROR
+                  clearErrors("day");
+              },
             })}
             value={input.year}
           />
