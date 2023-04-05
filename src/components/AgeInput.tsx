@@ -2,7 +2,7 @@ import arrow from "../assets/icon-arrow.svg";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { getDateInput, setInput } from "../redux/reducers/ageSlice";
+import { calculateAge, setInput } from "../redux/reducers/ageSlice";
 import dayjs from "dayjs";
 // FOR DATE VALIDATION (NORMAL DATE DOESN'T GET CORRECTLY VALIDATED)
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -36,7 +36,15 @@ const AgeInput = () => {
         }-${data.day.length < 2 ? data.day.padStart(2, "0") : data.day}`
       )
     ) {
-      dispatch(getDateInput(`${data.month}/${data.day}/${data.year}`));
+      dispatch(
+        calculateAge(
+          `${
+            data.month.length < 2 ? data.month.padStart(2, "0") : data.month
+          }/${data.day.length < 2 ? data.day.padStart(2, "0") : data.day}/${
+            data.year
+          }`
+        )
+      );
       // console.log(data);
     } else {
       // RETURNS AN ERROR FOR THE DAY INPUT
