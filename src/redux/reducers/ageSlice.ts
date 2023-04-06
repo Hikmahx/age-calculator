@@ -4,9 +4,9 @@ interface ageState {
   day: number | string;
   month: number | string;
   year: number | string;
-  currentDay: number;
-  currentMonth: number;
-  currentYear: number;
+  // currentDay: number;
+  // currentMonth: number;
+  // currentYear: number;
   ageDay: number;
   ageMonth: number;
   ageYear: number;
@@ -21,9 +21,9 @@ const initialState: ageState = {
   ageDay: 0,
   ageMonth: 0,
   ageYear: 0,
-  currentDay: new Date().getDate(),
-  currentMonth: new Date().getMonth() + 1,
-  currentYear: new Date().getFullYear(),
+  // currentDay: new Date().getDate(),
+  // currentMonth: new Date().getMonth() + 1,
+  // currentYear: new Date().getFullYear(),
   // dayNumbers: 0,
   input: {
     day: "",
@@ -56,15 +56,21 @@ const ageSlice = createSlice({
       state.ageMonth = elapsed.getMonth();
       state.ageDay = elapsed.getDay();
 
-
       // state.dayNumbers = new Date(
       //   state.year !== 0 ? state.year : state.currentYear,
       //   state.month !== 0 ? state.month : state.currentMonth,
       //   0
       // ).calculateAge();
     },
+    inputCalendarDate: (state, { payload }) => {
+      state.input = {
+        day: payload.day,
+        month: payload.month,
+        year: payload.year,
+      };
+    },
   },
 });
 
-export const { calculateAge, setInput } = ageSlice.actions;
+export const { calculateAge, setInput, inputCalendarDate } = ageSlice.actions;
 export default ageSlice.reducer;

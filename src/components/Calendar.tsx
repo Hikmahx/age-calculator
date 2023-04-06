@@ -8,18 +8,14 @@ import {
   chooseDate,
 } from "../redux/reducers/calendarSlice";
 import { RootState } from "../redux/store";
+import { inputCalendarDate } from "../redux/reducers/ageSlice";
 
 const Calendar = () => {
   const dispatch = useDispatch();
 
-  const {
-    pickedDate,
-    pickedDay,
-    pickedMonth,
-    dataType,
-    minRangeNum,
-    maxRangeNum,
-  } = useSelector((state: RootState) => state.calendar);
+  const { pickedDate, pickedDay, pickedMonth } = useSelector(
+    (state: RootState) => state.calendar
+  );
 
   // GET ALL DAYS OF THE WEEK STARTING FROM MONDAY I.E (.day(1))
   const startWeek = dayjs().day(1);
@@ -52,14 +48,20 @@ const Calendar = () => {
       id="collapseExample"
     >
       <div className="flex items-center justify-between mb-4 font-light">
-        <div onClick={() => dispatch(prevMonth())} className="cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-light-grey hover:bg-purple transition-all">
+        <div
+          onClick={() => dispatch(prevMonth())}
+          className="cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-light-grey hover:bg-purple transition-all"
+        >
           <i className="fas fa-chevron-left text-xs h-fit hover:text-white transition-all"></i>
           <span className="sr-only">Previous</span>
         </div>
         <h2 className="text-center ">
           {currentMonth} {currentYear}
         </h2>
-        <div onClick={() => dispatch(nextMonth())} className="cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-light-grey hover:bg-purple transition-all">
+        <div
+          onClick={() => dispatch(nextMonth())}
+          className="cursor-pointer w-10 h-10 flex items-center justify-center rounded-full bg-light-grey hover:bg-purple transition-all"
+        >
           <i className="fas fa-chevron-right text-xs h-fit hover:text-white transition-all"></i>
           <span className="sr-only">Next</span>
         </div>
@@ -68,7 +70,7 @@ const Calendar = () => {
         {weekDays.map((weekDay, index) => (
           <div
             className={`text-center text-[10px] sm:text-xs lg:p-2 font-bold ${
-              weekDay === "Sun" ? "text-red-500" : ""
+              weekDay === "Sun" ? "text-purple" : ""
             }`}
             key={`weekday_${index}`}
           >
@@ -88,17 +90,28 @@ const Calendar = () => {
             return (
               // LET EVERY SUNDAY DATE HAVE A RED TEXT
               <div
+                data-toggle="collapse"
+                data-target="#collapseExample"
+                aria-expanded="false"
+                aria-controls="collapseExample"
                 key={index}
                 onClick={() => {
                   dispatch(chooseDate(day));
+                  dispatch(
+                    inputCalendarDate({
+                      day: day.toString(),
+                      month: dayjs(pickedDate).format("MM"),
+                      year: currentYear,
+                    })
+                  );
                 }}
                 className={`text-center sm:px-2 py-1 text-sm lg:text-base cursor-pointer lg:hover:bg-light-grey lg:hover:bg-opacity-10 border border-smokey-grey ${
-                  (index + weekIndex + 1) % 7 === 0 ? "text-red-500" : ""
+                  (index + weekIndex + 1) % 7 === 0 ? "text-purple" : ""
                 } ${
                   // CHECK FOR THE PICKED DAY, MONTH AND YEAR
                   day.toString() === pickedDay.toString() &&
                   currentMonth.toString() === pickedMonth.toString()
-                    ? "bg-purple bg-opacity-30 border border-purple"
+                    ? "bg-purple bg-opacity-40 border border-purple"
                     : ""
                 } `}
               >

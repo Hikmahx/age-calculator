@@ -6,6 +6,7 @@ import { calculateAge, setInput } from "../redux/reducers/ageSlice";
 import dayjs from "dayjs";
 // FOR DATE VALIDATION (NORMAL DATE DOESN'T GET CORRECTLY VALIDATED)
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useEffect } from "react";
 dayjs.extend(customParseFormat);
 
 type FormValues = {
@@ -24,9 +25,18 @@ const AgeInput = () => {
     formState: { errors },
     setError,
     clearErrors,
+    watch,
+    setValue,
   } = useForm<FormValues>({
-    mode: "onChange",
+    mode: "all",
   });
+
+  useEffect(() => {
+    setValue("day", input.day);
+    setValue("month", input.month);
+    setValue("year", input.year);
+    clearErrors();
+  }, [input]);
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     if (
