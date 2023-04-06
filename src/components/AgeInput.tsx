@@ -225,9 +225,9 @@ const AgeInput = () => {
       <div className="divider border-b border-light-grey py-8 lg:py-6 relative">
         <button
           type="submit"
-          className="absolute w-16 lg:w-24 h-16 lg:h-24 rounded-full bg-purple hover:bg-off-black transition-all inset-x-0 lg:top-0 lg:left-auto mx-auto flex p-5 lg:p-6"
+          className="absolute w-16 lg:w-24 h-16 lg:h-24 rounded-full bg-purple hover:bg-off-black transition-all inset-x-0 lg:top-0 lg:left-auto mx-auto flex !p-5 lg:!p-6"
         >
-          <img src={arrow} alt="down arrow" className="" />
+          <img src={arrow} alt="down arrow" className="m-auto" />
         </button>
       </div>
     </form>

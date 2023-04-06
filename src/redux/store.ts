@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
+import calendarReducer from "./reducers/calendarSlice";
 import ageReducer from "./reducers/ageSlice";
 
 export const store = configureStore({
   reducer: {
     age: ageReducer,
+    calendar: calendarReducer,
   },
 });
 
