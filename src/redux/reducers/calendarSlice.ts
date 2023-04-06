@@ -9,7 +9,6 @@ const calendarSlice = createSlice({
     pickedDay: parseInt(dayjs().format("DD")),
     pickedMonth: dayjs().format("MMMM"),
     pickedYear: parseInt(dayjs().format("YYYY")),
-    dateInput: "",
   },
   reducers: {
     nextMonth: (state) => {
@@ -17,12 +16,6 @@ const calendarSlice = createSlice({
     },
     prevMonth: (state) => {
       state.pickedDate = state.pickedDate.subtract(1, "month");
-    },
-    nextDay: (state) => {
-      state.pickedDate = state.pickedDate.add(1, "day");
-    },
-    prevDay: (state) => {
-      state.pickedDate = state.pickedDate.subtract(1, "day");
     },
     chooseDate: (state, { payload }) => {
       state.pickedDate = state.pickedDate.set("date", payload);
@@ -34,26 +27,17 @@ const calendarSlice = createSlice({
         state.pickedDate.set("date", payload).format("YYYY")
       );
     },
-    setDateInput: (state, { payload }) => {
-      state.dateInput = payload;
-      state.pickedDay = parseInt(payload.slice(0, 2));
-    },
-    inputDate: (state, { payload }) => {
-      state.pickedDate = payload.date;
-      state.pickedDay = payload.day;
-      state.pickedMonth = payload.month;
-      state.pickedYear = payload.year;
+    inputFormDate: (state, { payload }) => {
+      state.pickedDay = payload.day || state.pickedDay || 28;
+      state.pickedMonth = payload.month || state.pickedMonth || 12;
+      state.pickedYear = payload.year || state.pickedYear;
+      state.pickedDate =
+        dayjs(`${state.pickedYear}-${state.pickedMonth}-${state.pickedDay}`) ||
+        state.pickedDate;
     },
   },
 });
 
-export const {
-  nextMonth,
-  prevMonth,
-  chooseDate,
-  setDateInput,
-  inputDate,
-  prevDay,
-  nextDay,
-} = calendarSlice.actions;
+export const { nextMonth, prevMonth, chooseDate, inputFormDate } =
+  calendarSlice.actions;
 export default calendarSlice.reducer;

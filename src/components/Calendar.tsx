@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import dayjs from "dayjs";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -6,6 +6,7 @@ import {
   nextMonth,
   prevMonth,
   chooseDate,
+  inputFormDate,
 } from "../redux/reducers/calendarSlice";
 import { RootState } from "../redux/store";
 import { inputCalendarDate } from "../redux/reducers/ageSlice";
@@ -13,9 +14,37 @@ import { inputCalendarDate } from "../redux/reducers/ageSlice";
 const Calendar = () => {
   const dispatch = useDispatch();
 
-  const { pickedDate, pickedDay, pickedMonth } = useSelector(
+  const { pickedDate, pickedDay, pickedMonth, pickedYear } = useSelector(
     (state: RootState) => state.calendar
   );
+  const { input } = useSelector((state: RootState) => state.age);
+
+  useEffect(() => {
+    dispatch(
+      inputFormDate({
+        // DAY, MONTH AND YEAR ARE VALIDATED BEFORE SETTING THE PICKED DATE SO THE APP DOES CRASH
+        day:
+          input.day !== "" && input.day !== "0" && parseInt(input.day) < 32
+            ? input.day
+            : pickedDay,
+        month:
+          input.month !== "" &&
+          input.month !== "0" &&
+          parseInt(input.month) < 13
+            ? dayjs()
+                .month(parseInt(input.month) - 1)
+                .format("MMMM")
+            : pickedMonth,
+        year:
+          input.year !== "" &&
+          input.year !== "0" &&
+          parseInt(input.year) > 1800 &&
+          parseInt(input.year) <= new Date().getFullYear()
+            ? input.year
+            : pickedYear,
+      })
+    );
+  }, [input]);
 
   // GET ALL DAYS OF THE WEEK STARTING FROM MONDAY I.E (.day(1))
   const startWeek = dayjs().day(1);
