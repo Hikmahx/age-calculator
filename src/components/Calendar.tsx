@@ -73,7 +73,7 @@ const Calendar = () => {
 
   return (
     <div
-      className="absolute right-2 sm:right-4 top-12 z-10 w-full bg-white shadow-[0px_4px_30px_0px_rgba(0,0,0,0.25)] rounded-lg max-w-[342px]  px-4 py-5 lg:px-8 lg:py-6 mt-4 mx-auto flex-1 font-light collapse"
+      className="absolute right-2 sm:right-4 top-12 z-10 w-[90%] sm:w-full bg-white shadow-[0px_4px_30px_0px_rgba(0,0,0,0.25)] rounded-lg max-w-[342px]  px-4 py-5 lg:px-8 lg:py-6 mt-4 mx-auto flex-1 font-light collapse"
       id="collapseExample"
     >
       <div className="flex items-center justify-between mb-4 font-light">
